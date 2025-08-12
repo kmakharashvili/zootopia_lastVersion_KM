@@ -1,16 +1,16 @@
 {
-  "validUser": {
+  "newUser": {
     "name": "Test User",
-    "email": "testuser@example.com",
-    "password": "Password123!"
+    "email": "testuser{{timestamp}}@example.com",
+    "password": "Test1234"
+  },
+  "validUser": {
+    "name": "კახაბერ მახარაშვილი",
+    "email": "k.makharashvili8544@gmail.com",
+    "password": "Maisi2025#$#"
   },
   "invalidUser": {
-    "email": "wronguser@example.com",
-    "password": "WrongPass123"
-  },
-  "newUser": {
-    "name": "New User",
-    "email": "newuser+{{timestamp}}@example.com",
-    "password": "NewUser123!"
+    "email": "wrong@example.com",
+    "password": "WrongPassword"
   }
 }

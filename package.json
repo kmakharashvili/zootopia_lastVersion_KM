@@ -1,0 +1,22 @@
+{
+  "name": "zootopia_lastversion_km",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kmakharashvili/zootopia_lastVersion_KM.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kmakharashvili/zootopia_lastVersion_KM/issues"
+  },
+  "homepage": "https://github.com/kmakharashvili/zootopia_lastVersion_KM#readme",
+  "description": "",
+  "devDependencies": {
+    "cypress": "^14.5.4"
+  }
+}

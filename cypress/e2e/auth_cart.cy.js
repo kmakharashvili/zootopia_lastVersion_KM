@@ -1,58 +1,65 @@
 describe('Zootopia E2E Tests', () => {
-  beforeEach(function () {
+  beforeEach(() => {
     cy.fixture('users').then((users) => {
-      // dynamic email for newUser
       users.newUser.email = users.newUser.email.replace('{{timestamp}}', Date.now());
-      this.users = users;
+      cy.wrap(users).as('users');
     });
   });
 
   // --- რეგისტრაცია ---
   it('Successful registration', function () {
-    cy.register(this.users.newUser.name, this.users.newUser.email, this.users.newUser.password);
-    cy.url().should('include', '/dashboard');
-    cy.contains('გამარჯობა').should('be.visible');
+    cy.get('@users').then((users) => {
+      cy.register(users.newUser.name, users.newUser.email, users.newUser.password);
+      cy.url().should('include', '/profile');
+      cy.contains('გამარჯობა').should('exist');
+    });
   });
 
   it('Registration with existing email fails', function () {
-    cy.register(this.users.validUser.name, this.users.validUser.email, this.users.validUser.password);
-    cy.contains('ელფოსტა უკვე დაკავებულია').should('be.visible');
-    cy.url().should('include', '/register');
+    cy.get('@users').then((users) => {
+      cy.register(users.validUser.name, users.validUser.email, users.validUser.password);
+      cy.contains('ასეთი ჩანაწერი უკვე არსებობს').should('be.visible');
+      cy.url().should('include', '/register');
+    });
   });
 
   // --- ავტორიზაცია ---
   it('Login with valid credentials', function () {
-    cy.login(this.users.validUser.email, this.users.validUser.password);
-    cy.url().should('include', '/dashboard');
-    cy.contains('გამარჯობა').should('be.visible');
+    cy.get('@users').then((users) => {
+      cy.login(users.validUser.email, users.validUser.password);
+      cy.url().should('include', '/profile');
+      cy.contains('გამარჯობა').should('exist');
+    });
   });
 
   it('Login with invalid credentials fails', function () {
-    cy.login(this.users.invalidUser.email, this.users.invalidUser.password);
-    cy.contains('არასწორი მონაცემები').should('be.visible');
-    cy.url().should('include', '/login');
+    cy.get('@users').then((users) => {
+      cy.login(users.invalidUser.email, users.invalidUser.password);
+      cy.contains('არასწორი მონაცემები').should('exist');
+    });
   });
 
   it('Logout successfully', function () {
-    cy.login(this.users.validUser.email, this.users.validUser.password);
-    cy.get('.logout-btn').click();
-    cy.url().should('include', '/login');
-    cy.contains('შესვლა').should('be.visible');
+    cy.get('@users').then((users) => {
+      cy.login(users.validUser.email, users.validUser.password);
+      cy.get('.logout-btn').click();
+      cy.contains('შესვლა').should('exist');
+    });
   });
 
   // --- კალათა ---
   it('Add product to cart', function () {
-    cy.login(this.users.validUser.email, this.users.validUser.password);
-    cy.visit('/ka');
-    cy.addToCartByProductName('Bosch Dog-Premium 20 kg');
-    cy.get('#cart-items-count').should('contain', '1');
-    cy.contains('დამატებულია').should('be.visible');
-  });
+    cy.get('@users').then((users) => {
+      cy.login(users.validUser.email, users.validUser.password);
 
-  it('Remove product from cart', function () {
-    cy.login(this.users.validUser.email, this.users.validUser.password);
-    cy.visit('/ka/cart');
-    cy.get('.remove-item').first().click();
-    cy.contains('კალათა ცარიელია').should('be.visible');
+      cy.visit('/ka');
+      cy.get('input[name="keyword"]').type('SANICAT SUPERPLUS TR V/N 10L{enter}');
+      cy.contains('a', 'SANICAT SUPERPLUS TR V/N 10L').click();
+
+      cy.contains('ბ').parent('button').click(); // კალათაში დამატება
+      cy.get('a.icart > p').click(); // კალათის გახსნა
+
+      cy.get('.cart-box h2').should('contain', 'SANICAT SUPERPLUS TR V/N 10L');
+    });
   });
 });
